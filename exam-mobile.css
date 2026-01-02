@@ -1,0 +1,617 @@
+/* =============================================
+   تحسينات متخصصة لصفحة الامتحانات على الجوال
+   ============================================= */
+
+/* ====== تحسينات عامة للامتحانات على الجوال ====== */
+
+@media (max-width: 768px) {
+    /* تحسين رأس الامتحان */
+    .exam-header {
+        padding: 15px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    
+    .exam-header-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .exam-title {
+        gap: 10px;
+    }
+    
+    .exam-title h1 {
+        font-size: 1.3rem;
+    }
+    
+    .exam-title i {
+        font-size: 1.5rem;
+    }
+    
+    .exam-badge {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+    
+    /* تحسين المؤقت */
+    .exam-timer {
+        min-width: auto;
+        padding: 12px 15px;
+    }
+    
+    .timer-display {
+        font-size: 1.5rem;
+        gap: 8px;
+    }
+    
+    .timer-display i {
+        font-size: 1.2rem;
+    }
+    
+    /* تحسين بطاقة الطالب */
+    .student-card {
+        min-width: auto;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .student-card i {
+        font-size: 1.2rem;
+    }
+    
+    .student-card strong {
+        margin-bottom: 2px;
+    }
+    
+    .student-card small {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 640px) {
+    /* تحسين رأس الامتحان للشاشات الصغيرة */
+    .exam-header {
+        padding: 12px 15px;
+    }
+    
+    .exam-title h1 {
+        font-size: 1.1rem;
+    }
+    
+    .exam-badge {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+    }
+    
+    .timer-display {
+        font-size: 1.3rem;
+    }
+    
+    /* تحسين محتوى الامتحان */
+    .exam-container {
+        margin: 10px auto;
+        padding: 0 10px;
+        gap: 15px;
+    }
+    
+    .questions-container {
+        padding: 12px;
+        border-radius: 10px;
+    }
+    
+    .question-item {
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+    }
+    
+    .question-header {
+        gap: 8px;
+    }
+    
+    .question-number {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .question-text {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+    
+    .question-points {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+    
+    /* تحسين خيارات الإجابة */
+    .options-container {
+        gap: 10px;
+    }
+    
+    .option-item {
+        padding: 12px 14px;
+        gap: 12px;
+        border-radius: 8px;
+    }
+    
+    .option-letter {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .option-text {
+        font-size: 0.95rem;
+    }
+    
+    /* تحسين عناصر التحكم */
+    .exam-controls {
+        position: static;
+    }
+    
+    .controls-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .controls-section h3 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    
+    .questions-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .question-nav-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+    
+    /* تحسين الإحصائيات */
+    .stats-box {
+        padding: 12px;
+    }
+    
+    .stat-item {
+        padding: 8px 0;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    /* تحسين الأزرار */
+    .submit-exam-btn,
+    .save-exam-btn,
+    .exit-exam-btn {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* تحسينات إضافية للهواتف الصغيرة */
+    .exam-header {
+        padding: 10px 12px;
+    }
+    
+    .exam-title h1 {
+        font-size: 1rem;
+    }
+    
+    .exam-container {
+        margin: 8px auto;
+        padding: 0 8px;
+    }
+    
+    .questions-container {
+        padding: 10px;
+    }
+    
+    .question-item {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .question-text {
+        font-size: 0.95rem;
+    }
+    
+    .option-item {
+        padding: 10px 12px;
+    }
+    
+    .questions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ====== تحسينات متخصصة لأجهزة Pixel ====== */
+
+@media (device-width: 393px) and (device-height: 851px) and (-webkit-device-pixel-ratio: 2.75),
+       (device-width: 360px) and (device-height: 800px) and (-webkit-device-pixel-ratio: 2),
+       (device-width: 412px) and (device-height: 915px) and (-webkit-device-pixel-ratio: 2.625) {
+    
+    /* Pixel 6, 6a, 6 Pro, 7, 7a, 7 Pro, etc. */
+    
+    body {
+        font-size: 16px;
+    }
+    
+    /* تحسين الامتحانات */
+    .exam-header {
+        padding: 12px 16px;
+    }
+    
+    .exam-container {
+        margin: 12px auto;
+        padding: 0 12px;
+    }
+    
+    .questions-container {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .question-item {
+        padding: 14px;
+        margin-bottom: 14px;
+        border-radius: 12px;
+    }
+    
+    .options-container {
+        gap: 12px;
+    }
+    
+    .option-item {
+        padding: 13px 15px;
+        border-radius: 10px;
+    }
+    
+    /* تحسين الشاشة للقراءة الأفضل */
+    .timer-display {
+        font-size: 1.4rem;
+    }
+    
+    .question-text {
+        font-size: 1.05rem;
+        line-height: 1.5;
+    }
+    
+    .option-text {
+        font-size: 1rem;
+    }
+    
+    /* تحسين الأزرار */
+    .control-btn,
+    .submit-exam-btn,
+    .save-exam-btn {
+        padding: 11px 16px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+        min-height: 44px;
+    }
+    
+    .questions-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 9px;
+    }
+    
+    .question-nav-btn {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* ====== تحسينات Samsung Galaxy ====== */
+
+@media (max-width: 640px) and (min-width: 410px) {
+    /* أجهزة Samsung Galaxy S20, S21, S22, etc. */
+    
+    .exam-container {
+        gap: 18px;
+    }
+    
+    .questions-container {
+        padding: 14px;
+    }
+    
+    .question-item {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .options-container {
+        gap: 13px;
+    }
+    
+    .option-item {
+        padding: 14px 16px;
+    }
+}
+
+/* ====== تحسينات iPhone ====== */
+
+@media (max-width: 640px) and (-webkit-device-pixel-ratio: 2) {
+    /* iPhone 12 mini, 13 mini */
+    
+    .exam-header {
+        padding: 11px 14px;
+    }
+    
+    .question-text {
+        font-size: 1.02rem;
+    }
+    
+    .questions-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+}
+
+@media (max-width: 800px) and (-webkit-device-pixel-ratio: 3) {
+    /* iPhone 12 Pro Max, 13 Pro Max, 14 Pro Max */
+    
+    .exam-container {
+        gap: 20px;
+    }
+    
+    .questions-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+    
+    .question-nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* ====== تحسينات عام - Scrolling الأفقي ====== */
+
+@media (max-width: 768px) {
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+    }
+    
+    .exam-container,
+    .questions-container,
+    .controls-section {
+        overflow-x: hidden;
+    }
+}
+
+/* ====== تحسينات الأداء ====== */
+
+@media (max-width: 640px) {
+    /* تقليل الظلال الثقيلة */
+    .question-item {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+    
+    .option-item {
+        box-shadow: none;
+        border: 2px solid var(--border-color);
+    }
+    
+    /* تقليل الحركات */
+    * {
+        transition-duration: 200ms;
+    }
+    
+    /* تحسين الـ z-index */
+    .exam-header {
+        z-index: 50;
+    }
+    
+    .modal-overlay {
+        z-index: 100;
+    }
+}
+
+/* ====== تحسينات Safe Area ====== */
+
+@supports (padding: max(0px)) {
+    @media (max-width: 768px) {
+        .exam-header {
+            padding-top: max(12px, env(safe-area-inset-top));
+        }
+        
+        .exam-container {
+            padding-bottom: max(12px, env(safe-area-inset-bottom));
+        }
+    }
+}
+
+/* ====== منع مشاكل الكتابة ====== */
+
+@media (max-width: 768px) {
+    textarea, input[type="text"], input[type="password"] {
+        font-size: 16px;
+        padding: 12px;
+        min-height: 44px;
+    }
+}
+
+/* ====== تحسينات اللمس ====== */
+
+@media (hover: none) and (pointer: coarse) {
+    .question-item:active {
+        background: rgba(59, 130, 246, 0.02);
+    }
+    
+    .option-item:active {
+        background: rgba(59, 130, 246, 0.02);
+    }
+    
+    .control-btn:active,
+    .submit-exam-btn:active {
+        opacity: 0.8;
+    }
+}
+
+/* ====== تحسينات الاتجاه ====== */
+
+@media (orientation: landscape) {
+    .exam-header {
+        padding: 10px 15px;
+    }
+    
+    .exam-title h1 {
+        font-size: 1.1rem;
+    }
+    
+    .exam-container {
+        margin: 10px auto;
+    }
+    
+    .questions-container {
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    
+    .exam-controls {
+        position: sticky;
+        top: 60px;
+        background: var(--bg-primary);
+    }
+}
+
+@media (orientation: portrait) {
+    .exam-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .exam-controls {
+        position: static;
+    }
+}
+
+/* ====== منع الارتجاج ====== */
+
+.exam-header,
+.questions-container,
+.controls-section {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ====== تحسين الوضوح ====== */
+
+@media (max-width: 768px) {
+    .exam-header,
+    .question-item,
+    .option-item,
+    .controls-section {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* ====== منع الـ zoom على النص ====== */
+
+.question-text,
+.option-text {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ====== تحسين الأيقونات ====== */
+
+@media (max-width: 768px) {
+    .exam-header i,
+    .question-nav-btn i {
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* ====== تحسينات النصوص العربية ====== */
+
+@media (max-width: 768px) {
+    .question-text,
+    .option-text,
+    .stat-label {
+        word-spacing: 0.05em;
+        letter-spacing: 0.01em;
+    }
+}
+
+/* ====== تحسينات الحدود ====== */
+
+@media (max-width: 768px) {
+    .question-item,
+    .option-item,
+    .controls-section {
+        border-radius: 10px;
+    }
+}
+
+/* ====== إصلاح تمرير اللمس ====== */
+
+.questions-container,
+.options-container,
+.questions-grid {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* ====== تجاوزات نهائية لإصلاح الانزياح الأفقي في صفحة الامتحان ====== */
+/* تكفل أن عناصر صفحة الامتحان لا تتجاوز عرض الشاشة على الجوال */
+body.mobile-exam, body.mobile-exam html {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body.mobile-exam * {
+    box-sizing: border-box;
+    /* السماح للعناصر بالتقلص بدلاً من دفع العرض خارج الشاشة */
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+/* عناصر المحتوى النصي والرمزي يجب أن تنكسر بشكل طبيعي */
+body.mobile-exam img,
+body.mobile-exam table,
+body.mobile-exam pre,
+body.mobile-exam code,
+body.mobile-exam .question-text,
+body.mobile-exam .option-text {
+    max-width: 100% !important;
+    height: auto !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+}
+
+/* تباعد وحشوة أقل للأزرار الطافية على الشاشات الصغيرة */
+@media (max-width: 480px) {
+    body.mobile-exam .exam-container,
+    body.mobile-exam .questions-container {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    body.mobile-exam .exam-button-container {
+        left: 12px !important;
+        right: 12px !important;
+    }
+
+    body.mobile-exam .exam-btn {
+        padding: 10px 12px !important;
+        font-size: 0.95rem !important;
+    }
+}

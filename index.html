@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مشغل JavaScript">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="منصة تعليمية متقدمة لتعلم JavaScript مع محرر كود متطور وامتحانات تفاعلية">
+    <meta name="keywords" content="JavaScript, تعليم, برمجة, امتحانات">
+    <title>مشغل JavaScript | نظام الامتحانات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon and social preview -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    <!-- Fallback data-URI favicon -->
+    <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0%200%20100%20100'><rect width='100' height='100' rx='18' fill='%237c3aed'/><text x='50' y='57' font-family='Segoe%20UI,Arial,sans-serif' font-size='46' fill='white' text-anchor='middle' font-weight='700'>ح</text></svg>" type="image/svg+xml">
+    <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="مشغل JavaScript | نظام الامتحانات">
+    <meta property="og:description" content="منصة تعليمية متقدمة لتعلم JavaScript مع محرر كود متطور وامتحانات تفاعلية">
+    <meta property="og:image" content="/og-image.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="مشغل JavaScript | نظام الامتحانات">
+    <meta name="twitter:description" content="منصة تعليمية متقدمة لتعلم JavaScript مع محرر كود متطور وامتحانات تفاعلية">
+    <meta name="twitter:image" content="/og-image.svg">
+    <link rel="image_src" href="/og-image.svg">
+    <!-- مكتبة JSZip للأرشيفات -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- شاشة الترحيب -->
+    <div id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-content">
+            <div class="welcome-logo">
+                <i class="fas fa-code"></i>
+            </div>
+            
+            <h1 class="welcome-title">حودا</h1>
+            <p class="welcome-subtitle">مشغل JavaScript المتطور</p>
+            
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر الوضع الداكن -->
+    <div class="theme-toggle-container">
+        <button id="themeToggle" class="theme-toggle-btn">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="theme-ball"></span>
+        </button>
+    </div>
+
+    <!-- زر إنشاء موقع جديد -->
+    <div class="create-site-button-container">
+        <button class="create-site-btn" onclick="openWebsiteBuilder()">
+            <i class="fas fa-globe"></i>
+            إنشاء موقع
+        </button>
+    </div>
+
+    <!-- زر الامتحان الثابت -->
+    <div class="exam-button-container">
+        <button class="exam-btn" onclick="openLoginModal()">
+            <i class="fas fa-graduation-cap"></i>
+            امتحان الآن
+        </button>
+    </div>
+
+    <!-- زر الذكاء الاصطناعي الجديد -->
+    <div class="ai-button-container">
+        <button class="ai-btn" onclick="toggleChatbot()">
+            <i class="fas fa-robot"></i>
+            تديث
+        </button>
+    </div>
+
+    <!-- نافذة تسجيل الدخول للامتحان -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-sign-in-alt"></i> تسجيل دخول للامتحان</h2>
+                <p class="modal-subtitle">أدخل بيانات الطالب للبدء</p>
+                <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="studentId">
+                            <i class="fas fa-id-card"></i> رقم الطالب (ID)
+                        </label>
+                        <input type="text" id="studentId" required 
+                               placeholder="مثال: 2023001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="studentPassword">
+                            <i class="fas fa-lock"></i> كلمة المرور
+                        </label>
+                        <input type="password" id="studentPassword" required 
+                               placeholder="أدخل كلمة المرور">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="examType">
+                            <i class="fas fa-file-alt"></i> نوع الامتحان
+                        </label>
+                        <select id="examType" required>
+                            <option value="">اختر نوع الامتحان</option>
+                            <option value="javascript_basic">JavaScript أساسيات</option>
+                            <option value="javascript_advanced">JavaScript متقدم</option>
+                            <option value="html_css">HTML & CSS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-play"></i> بدء الامتحان
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="closeLoginModal()">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                    
+                    <div class="form-info">
+                        <p><i class="fas fa-info-circle"></i> مدة الامتحان: 60 دقيقة (20 سؤال)</p>
+                        <p><i class="fas fa-exclamation-triangle"></i> لا يمكن إعادة الامتحان بعد البدء</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة الامتحان -->
+    <div id="examPage" class="exam-page" style="display: none;">
+        <!-- سيتم ملؤها بالجافاسكربت -->
+    </div>
+
+    <!-- حاوية البوت الذكي (مخفية افتراضياً) -->
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <h2><i class="fas fa-robot"></i> الذكاء الاصطناعي</h2>
+            <button class="close-chatbot-btn" onclick="toggleChatbot()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="chatbot-body">
+            <div class="chat-messages" id="chatMessages">
+                <!-- الرسائل ستظهر هنا -->
+            </div>
+            
+            <div class="input-container">
+                <textarea id="userInput" class="input-field" placeholder="اكتب سؤالك أو كودك هنا..."></textarea>
+                <button id="sendButton" class="send-button">إرسال</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="main-container" id="mainContent">
+        <!-- الهيدر -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <i class="fas fa-code header-icon"></i>
+                    <h1>مشغل JavaScript المتطور</h1>
+                    <span class="version-badge">v2.5</span>
+                </div>
+                
+                <div class="header-info">
+                    <div class="developer-card">
+                        <div class="dev-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="dev-info">
+                            <h3>محمود أحمد سعيد</h3>
+                            <p>مطور الرئيسي</p>
+                        </div>
+                    </div>
+                    
+                    
+                
+               
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="main-content">
+            <!-- محرر الكود -->
+            <section class="code-editor-section">
+                <div class="editor-container">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <h2><i class="fas fa-edit"></i> محرر الكود</h2>
+                            <span class="code-stats" id="codeStats">0 سطر, 0 حرف</span>
+                        </div>
+                        
+                        <div class="editor-controls">
+                            <button class="control-btn run-btn" onclick="runCode()">
+                                <i class="fas fa-play"></i> تشغيل الكود
+                                <span class="shortcut">Ctrl+Enter</span>
+                            </button>
+                            
+                            <button class="control-btn examples-btn" onclick="openExamplesModal()">
+                                <i class="fas fa-code"></i> أمثلة
+                                <span class="shortcut">Ctrl+E</span>
+                            </button>
+                            
+                            <button class="control-btn save-btn" onclick="saveCurrentCode()">
+                                <i class="fas fa-save"></i> حفظ
+                                <span class="shortcut">Ctrl+S</span>
+                            </button>
+                            
+                            <button class="control-btn clear-btn" onclick="clearCode()">
+                                <i class="fas fa-redo"></i> مسح
+                                <span class="shortcut">Ctrl+L</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-body">
+                        <textarea id="code-input" spellcheck="false" placeholder="اكتب كود JavaScript هنا...">// جرب أي كود JavaScript
+console.log(5 + 5); // سيطبع 10
+
+// يمكنك تجربة:
+// 1. العمليات الحسابية
+console.log(10 * 2); // 20
+
+// 2. الدوال
+function greet(name) {
+    return "مرحباً " + name;
+}
+console.log(greet("محمود"));
+
+// 3. المصفوفات
+let numbers = [1, 2, 3, 4, 5];
+console.log("مجموع المصفوفة:", numbers.reduce((a, b) => a + b, 0));
+
+// 4. الشروط
+let age = 20;
+if (age >= 18) {
+    console.log("يمكنك التصويت");
+} else {
+    console.log("لا يمكنك التصويت");
+}</textarea>
+                    </div>
+                    
+                    <div class="editor-footer">
+                        <div class="language-badge">
+                            <i class="fab fa-js-square"></i>
+                            <span>JavaScript ES6+</span>
+                        </div>
+                        
+                        <div class="status-indicator">
+                            <i class="fas fa-circle"></i>
+                            <span id="status">جاهز</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- منطقة النتيجة -->
+            <section class="output-section">
+                <div class="output-container">
+                    <div class="output-header">
+                        <div class="output-title">
+                            <i class="fas fa-terminal"></i>
+                            <h2>النتيجة</h2>
+                        </div>
+                        
+                        <div class="output-controls">
+                            <button class="control-btn copy-btn" onclick="copyOutput()">
+                                <i class="fas fa-copy"></i> نسخ
+                            </button>
+                            <button class="control-btn clear-output-btn" onclick="clearOutput()">
+                                <i class="fas fa-trash"></i> مسح
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="output-body">
+                        <div id="output">
+                            <div class="welcome-message">
+                                <div class="message-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="message-content">
+                                    <h3>مرحباً في مشغل JavaScript! 👋</h3>
+                                    <p>اكتب كود JavaScript في المحرر على اليسار واضغط على زر "تشغيل الكود" لتنفيذه.</p>
+                                    <p>يمكنك استخدام مكتبة الأمثلة لتحميل أمثلة جاهزة.</p>
+                                    <div class="tip">
+                                        <strong>💡 نصيحة:</strong> اضغط Ctrl+Enter لتشغيل الكود بسرعة
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-examples">
+                                <h4><i class="fas fa-bolt"></i> أمثلة سريعة</h4>
+                                <div class="examples-grid">
+                                    <div class="example-item" onclick="loadQuickExample('calc')">
+                                        <i class="fas fa-calculator"></i>
+                                        <span>حساب</span>
+                                    </div>
+                                    <div class="example-item" onclick="loadQuickExample('loop')">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>حلقات</span>
+                                    </div>
+                                    <div class="example-item" onclick="loadQuickExample('array')">
+                                        <i class="fas fa-list"></i>
+                                        <span>مصفوفات</span>
+                                    </div>
+                                    <div class="example-item" onclick="loadQuickExample('function')">
+                                        <i class="fas fa-function"></i>
+                                        <span>دوال</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="features-showcase">
+                                <h4><i class="fas fa-star"></i> ميزات المشغل</h4>
+                                <div class="features-list">
+                                    <div class="feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>تشغيل مباشر للكود</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>عرض النتائج فوراً</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>وضع فاتح/داكن</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>أمثلة تفاعلية</span>
+                                    </div>
+                                    <div class="feature">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>حفظ الكود تلقائياً</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <!-- الفوتر -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-info-circle"></i> عن المشروع</h3>
+                    <p>مشغل JavaScript المتطور هو أداة تتيح لك كتابة وتنفيذ كود JavaScript مباشرة في المتصفح.</p>
+                    <p>تم تطويره لمساعدة المبرمجين والمبتدئين في تعلم وتجربة JavaScript.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-users"></i> المطور</h3>
+                    <ul class="team-credits">
+                        <li>محمود أحمد سعيد - المطور الرئيسي</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-mobile-alt"></i> المنصات المدعومة</h3>
+                    <div class="platforms">
+                        <div class="platform">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span>الهواتف</span>
+                        </div>
+                        <div class="platform">
+                            <i class="fas fa-tablet-alt"></i>
+                            <span>التابلت</span>
+                        </div>
+                        <div class="platform">
+                            <i class="fas fa-desktop"></i>
+                            <span>الكمبيوتر</span>
+                        </div>
+                    </div>
+                    <p>يعمل على جميع المتصفحات الحديثة</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2026 مشغل JavaScript المتطور - جميع الحقوق محفوظة</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- نافذة الأمثلة -->
+    <div id="examplesModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-code"></i> مكتبة الأمثلة التفاعلية</h2>
+                <p class="modal-subtitle">اختر مثالاً لتجربته في المحرر</p>
+                <button class="modal-close" onclick="closeExamplesModal()">&times;</button>
+            </div>
+            
+            <div class="modal-filters">
+                <div class="filter-group">
+                    <span class="filter-label">المستوى:</span>
+                    <button class="filter-btn active" data-filter="all">الكل</button>
+                    <button class="filter-btn" data-filter="beginner">مبتدئ</button>
+                    <button class="filter-btn" data-filter="intermediate">متوسط</button>
+                    <button class="filter-btn" data-filter="advanced">متقدم</button>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" id="exampleSearch" placeholder="بحث في الأمثلة...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            
+            <div class="modal-body" id="examplesContainer">
+                <!-- الأمثلة ستظهر هنا عبر JavaScript -->
+            </div>
+            
+            <div class="modal-footer">
+                <div class="modal-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>انقر على أي مثال لتحميله في المحرر</span>
+                </div>
+                <button class="random-example-btn" onclick="loadRandomExample()">
+                    <i class="fas fa-random"></i> مثال عشوائي
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- واجهة إنشاء الموقع -->
+    <div id="websiteBuilderPage" class="website-builder-page" style="display: none;">
+        <div class="builder-header">
+            <div class="builder-header-content">
+                <div class="builder-title">
+                    <i class="fas fa-palette"></i>
+                    <h1>منشئ المواقع الذكي</h1>
+                </div>
+                
+                <div class="builder-controls">
+                    <button class="builder-btn new-project-btn" onclick="createNewProject()">
+                        <i class="fas fa-plus"></i> مشروع جديد
+                    </button>
+                    
+                    <button class="builder-btn preview-btn" onclick="previewWebsite()">
+                        <i class="fas fa-eye"></i> معاينة
+                    </button>
+                    
+                    <button class="builder-btn download-btn" onclick="downloadProject()">
+                        <i class="fas fa-download"></i> تحميل الملفات
+                    </button>
+                    
+                    <button class="builder-btn my-projects-btn" onclick="showMyProjects()">
+                        <i class="fas fa-folder-open"></i> مشاريعي
+                    </button>
+                    
+                    <button class="builder-btn exit-btn" onclick="exitWebsiteBuilder()">
+                        <i class="fas fa-sign-out-alt"></i> خروج
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="builder-container">
+            <!-- زر Toggle للقائمة الجانبية على الجوال -->
+            <button class="sidebar-toggle-btn" id="sidebarToggleBtn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <!-- خلفية مظلمة للقائمة الجانبية -->
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+            
+            <!-- الشريط الجانبي للملفات -->
+            <div class="files-sidebar" id="filesSidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-folder"></i> ملفات المشروع</h3>
+                    <div class="sidebar-header-buttons">
+                        <button class="add-file-btn" onclick="createNewFile()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="close-sidebar-btn" id="closeSidebarBtn" onclick="closeSidebar()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="files-list" id="filesList">
+                    <!-- الملفات ستظهر هنا -->
+                </div>
+                
+                <div class="project-info">
+                    <h4><i class="fas fa-info-circle"></i> معلومات المشروع</h4>
+                    <div class="project-name">
+                        <input type="text" id="projectName" placeholder="اسم المشروع" value="مشروعي_الاول" oninput="updateProjectName(this.value)">
+                    </div>
+                    <div class="project-stats">
+                        <p>الملفات: <span id="fileCount">1</span></p>
+                        <p>الحجم: <span id="projectSize">1 KB</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- منطقة المحرر الرئيسي -->
+            <div class="editor-area">
+                <div class="editor-tabs" id="editorTabs">
+                    <!-- تبويبات الملفات ستظهر هنا -->
+                </div>
+                
+                <div class="code-editor-container">
+                    <div class="editor-header">
+                        <div class="file-info">
+                            <i class="fas fa-file-code"></i>
+                            <span id="currentFileName">index.html</span>
+                            <span class="file-size" id="currentFileSize">1 KB</span>
+                        </div>
+                        
+                        <div class="editor-actions">
+                            <button class="action-btn save-btn" onclick="saveCurrentFile()">
+                                <i class="fas fa-save"></i> حفظ
+                            </button>
+                            <button class="action-btn format-btn" onclick="formatCode()">
+                                <i class="fas fa-indent"></i> تنسيق
+                            </button>
+                            <button class="action-btn run-btn" onclick="runWebsiteCode()">
+                                <i class="fas fa-play"></i> تشغيل
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="code-editor-wrapper">
+                        <textarea id="websiteCodeEditor" spellcheck="false" placeholder="اكتب كود HTML هنا...">&lt;!DOCTYPE html&gt;
+&lt;html lang="ar" dir="rtl"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;موقعي الجديد&lt;/title&gt;
+    &lt;style&gt;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #4ade80;
+        }
+        
+        .cta-button {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.4);
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;h1&gt;🚀 مرحباً في موقعي!&lt;/h1&gt;
+        &lt;p&gt;هذا موقعي الأول الذي أنشأته باستخدام منشئ المواقع الذكي. يمكنك تعديل هذا الكود وإضافة مميزات جديدة.&lt;/p&gt;
+        
+        &lt;div class="features"&gt;
+            &lt;div class="feature"&gt;
+                &lt;i class="fas fa-mobile-alt"&gt;&lt;/i&gt;
+                &lt;h3&gt;متجاوب&lt;/h3&gt;
+                &lt;p&gt;يعمل على جميع الأجهزة&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="feature"&gt;
+                &lt;i class="fas fa-bolt"&gt;&lt;/i&gt;
+                &lt;h3&gt;سريع&lt;/h3&gt;
+                &lt;p&gt;تحميل فائق السرعة&lt;/p&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="feature"&gt;
+                &lt;i class="fas fa-paint-brush"&gt;&lt;/i&gt;
+                &lt;h3&gt;جميل&lt;/h3&gt;
+                &lt;p&gt;تصميم عصري وجذاب&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        
+        &lt;button class="cta-button" onclick="showMessage()"&gt;
+            &lt;i class="fas fa-rocket"&gt;&lt;/i&gt; ابدأ الآن
+        &lt;/button&gt;
+    &lt;/div&gt;
+    
+    &lt;script&gt;
+        function showMessage() {
+            alert('مرحباً! هذا موقعك الأول. يمكنك تعديله كما تشاء!');
+        }
+        
+        // إضافة تأثيرات تفاعلية
+        document.querySelectorAll('.feature').forEach(feature =&gt; {
+            feature.addEventListener('click', function() {
+                this.style.background = 'rgba(255, 255, 255, 0.25)';
+            });
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</textarea>
+                    </div>
+                    
+                    <div class="editor-footer">
+                        <div class="language-selector">
+                            <select id="fileType" onchange="changeFileType()">
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="js">JavaScript</option>
+                            </select>
+                        </div>
+                        
+                        <div class="editor-stats">
+                            <span id="editorLines">0</span> سطر | 
+                            <span id="editorChars">0</span> حرف
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- معاينة الموقع -->
+            <div class="preview-area" id="previewArea">
+                <div class="preview-header">
+                    <h3><i class="fas fa-eye"></i> معاينة الموقع</h3>
+                    <button class="refresh-btn" onclick="refreshPreview()">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                
+                <div class="preview-container">
+                    <iframe id="websitePreview" sandbox="allow-scripts allow-same-origin"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة المشاريع السابقة -->
+    <div id="projectsModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-folder-open"></i> مشاريعي السابقة</h2>
+                <button class="modal-close" onclick="closeProjectsModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="projects-list" id="projectsList">
+                    <!-- المشاريع ستظهر هنا -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="control-btn" onclick="importProject()">
+                    <i class="fas fa-upload"></i> استيراد مشروع
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إنشاء ملف جديد -->
+    <div id="newFileModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-file-plus"></i> إنشاء ملف جديد</h2>
+                <button class="modal-close" onclick="closeNewFileModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="newFileForm">
+                    <div class="form-group">
+                        <label for="fileName">
+                            <i class="fas fa-file-signature"></i> اسم الملف
+                        </label>
+                        <input type="text" id="fileName" placeholder="مثال: index.html" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fileTemplate">
+                            <i class="fas fa-layer-group"></i> القالب
+                        </label>
+                        <select id="fileTemplate" onchange="updateTemplate()">
+                            <option value="html">صفحة HTML</option>
+                            <option value="css">ملف CSS</option>
+                            <option value="js">ملف JavaScript</option>
+                            <option value="blank">فارغ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="template-preview">
+                        <h4>معاينة القالب:</h4>
+                        <pre id="templatePreview"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="ar" dir="rtl"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;موقعي&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;مرحباً!&lt;/h1&gt;
+    &lt;p&gt;هذا موقعي الجديد.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-plus"></i> إنشاء ملف
+                        </button>
+                        <button type="button" class="cancel-btn" onclick="closeNewFileModal()">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

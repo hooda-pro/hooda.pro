@@ -1,0 +1,472 @@
+/* =============================================
+   تحسينات شاملة للأجهزة المحمولة
+   ============================================= */
+
+/* ====== إصلاح مشاكل الجوال الشائعة ====== */
+
+/* منع التكبير التلقائي للنصوص */
+input, textarea, select {
+    font-size: 16px !important;
+}
+
+/* تحسين التوافقية على iOS */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 8px;
+}
+
+/* إزالة الحد الافتراضي للأزرار */
+button, input[type="button"], input[type="submit"] {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 8px;
+}
+
+/* ====== تحسين التركيز على الجوال ====== */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ====== منع الارتجاج عند اللمس ====== */
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/* ====== تحسين الكتابة على الجوال ====== */
+.mobile-optimized input[type="text"],
+.mobile-optimized input[type="password"],
+.mobile-optimized textarea {
+    font-size: 16px !important;
+    padding: 12px 15px;
+    line-height: 1.5;
+}
+
+/* ====== تحسين حجم الأزرار على الجوال ====== */
+@media (max-width: 640px) {
+    button, .btn, input[type="button"], input[type="submit"] {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px;
+    }
+    
+    /* منطقة اللمس الآمنة */
+    a, button {
+        min-height: 48px;
+        min-width: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* ====== منع الانزلاق (Scrolling) المتداخل ====== */
+.output-body, #code-input {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+}
+
+/* ====== تحسين الوضوح ====== */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ====== منع الانزلاق الأفقي ====== */
+body {
+    overflow-x: hidden;
+}
+
+/* ====== تحسين الصور ====== */
+img {
+    max-width: 100%;
+    height: auto;
+    -webkit-touch-callout: none;
+}
+
+/* ====== إزالة الحدود غير الضرورية ====== */
+@media (max-width: 640px) {
+    .modal-container,
+    .editor-container,
+    .output-container {
+        border-radius: 12px;
+    }
+    
+    .control-btn,
+    .example-item {
+        border-radius: 8px;
+    }
+}
+
+/* ====== منع الارتفاع الزائد للعناصر ====== */
+@media (max-width: 640px) {
+    .modal-container {
+        max-height: 95vh;
+    }
+    
+    .questions-container,
+    .editor-container,
+    .output-container {
+        max-height: calc(100vh - 150px);
+    }
+}
+
+/* ====== تحسين قراءة النصوص ====== */
+@media (max-width: 640px) {
+    body {
+        line-height: 1.6;
+    }
+    
+    p, span, li {
+        word-spacing: 0.05em;
+    }
+}
+
+/* ====== منع الحروف المتقطعة ====== */
+h1, h2, h3, h4, h5, h6 {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+/* ====== تحسين الألوان على الشاشات الصغيرة ====== */
+@media (prefers-color-scheme: dark) {
+    body {
+        color: #f9fafb;
+    }
+}
+
+/* ====== منع الانقسام على الجوال ====== */
+@media (max-width: 640px) {
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+/* ====== تحسين التمرير في القوائم ====== */
+.modal-body, .output-body, #code-input {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ====== منع القوائم من الخروج من الشاشة ====== */
+@media (max-width: 640px) {
+    .modal-filters {
+        position: sticky;
+        top: 0;
+        background: var(--bg-secondary);
+        z-index: 10;
+    }
+}
+
+/* ====== تحسين الرؤية في الضوء الساطع ====== */
+@media (max-width: 640px) {
+    .welcome-screen {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+}
+
+/* ====== منع الأخطاء في الكتابة من اليمين لليسار ====== */
+#code-input {
+    direction: ltr;
+    unicode-bidi: bidi-override;
+}
+
+/* ====== تحسين الأيقونات على الجوال ====== */
+@media (max-width: 640px) {
+    i {
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* ====== منع الارتجاج عند التمرير ====== */
+html {
+    scroll-behavior: smooth;
+    -webkit-scroll-behavior: smooth;
+}
+
+/* ====== تحسين الكنترول للأجهزة اللوحية ====== */
+@media (min-width: 768px) and (max-width: 1024px) {
+    /* استخدم عمودين للاستفادة من عرض التابلت */
+    .main-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding: 0 18px;
+        max-width: 1100px;
+        margin: 20px auto;
+    }
+
+    /* احتفظ بتخطيطات الامتحان قابلة للقراءة على التابلت */
+    .exam-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* عناصر التحكم تكون متاحة دائماً لكن لا تغطي المحتوى */
+    .exam-controls {
+        position: static;
+    }
+
+    /* تعديل أحجام العناوين لتناسب التابلت */
+    .header-title h1 {
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+
+    .welcome-name {
+        font-size: 2.4rem;
+    }
+
+    /* تعديل تباعد الرؤوس واللوحات */
+    .editor-header {
+        padding: 16px;
+    }
+
+    /* ضبط أزرار وعناصر الواجهة الثابتة */
+    .exam-button-container {
+        bottom: 24px;
+        left: 24px;
+    }
+
+    .theme-toggle-container {
+        top: 18px;
+        right: 18px;
+        transform: scale(0.98);
+    }
+
+    .modal-container {
+        max-width: 720px;
+    }
+
+    .developer-card, .team-item {
+        min-width: 160px;
+    }
+
+    /* شريط جانبي قابل للتمرير دون تغطية المحتوى */
+    .sidebar, .exam-controls {
+        position: sticky;
+        top: 84px;
+        max-height: calc(100vh - 100px);
+        overflow: auto;
+    }
+
+    /* مساحة آمنة أسفل المحتوى حتى لا تمنع الأزرار الثابتة القراءة */
+    body {
+        padding-bottom: 80px;
+    }
+}
+
+/* ====== تحسينات إضافية للشاشات الصغيرة جداً ====== */
+@media (max-width: 360px) {
+    html {
+        font-size: 12px;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    
+    .main-header,
+    .main-footer {
+        padding: 15px;
+    }
+    
+    .control-btn {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+}
+
+/* ====== منع المشاكل الشائعة على Safari ====== */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px var(--bg-primary) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+}
+
+/* ====== تحسين الـ Viewport على الأجهزة المحمولة ====== */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+        padding-top: max(16px, env(safe-area-inset-top));
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ====== تحسين الأداء ====== */
+* {
+    box-sizing: border-box;
+}
+
+.will-change {
+    will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ====== منع المزج الزائد ====== */
+.blurred {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* ====== تحسين الاستجابة اللمسية ====== */
+@media (hover: none) and (pointer: coarse) {
+    button:hover, a:hover, .control-btn:hover {
+        background-color: initial;
+        transform: none;
+    }
+    
+    button:active, a:active, .control-btn:active {
+        opacity: 0.8;
+    }
+}
+
+/* ====== منع الأخطاء في النصوص العربية ====== */
+body, html {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+}
+
+code, pre, #code-input {
+    direction: ltr;
+    unicode-bidi: bidi-override;
+}
+
+/* ====== تحسين القراءة في الوضع الليلي ====== */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #0f172a;
+        color: #f1f5f9;
+    }
+}
+
+/* ====== تحسينات واجهة منشئ المواقع على الجوال ====== */
+@media (max-width: 768px) {
+    .website-builder-page {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .builder-header {
+        padding: 12px 15px;
+        flex-wrap: wrap;
+    }
+    
+    .builder-header-content {
+        gap: 12px;
+    }
+    
+    .builder-title h1 {
+        font-size: 1.3rem;
+    }
+    
+    .builder-controls {
+        width: 100%;
+        order: 3;
+    }
+    
+    .builder-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .sidebar-toggle-btn {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+    }
+    
+    .sidebar-overlay.active {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .files-sidebar.active {
+        animation: slideInRight 0.3s ease;
+    }
+    
+    .code-editor-wrapper {
+        padding: 10px;
+    }
+    
+    #websiteCodeEditor {
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .editor-header {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+    
+    .file-info {
+        font-size: 0.9rem;
+    }
+    
+    .action-btn {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .editor-footer {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .preview-container {
+        max-height: 400px;
+    }
+}
+
+/* ====== تحسينات إضافية للشاشات الصغيرة جداً ====== */
+@media (max-width: 480px) {
+    .builder-btn {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .builder-btn i {
+        font-size: 1rem;
+    }
+    
+    .action-btn {
+        padding: 6px 8px;
+    }
+    
+    .files-sidebar {
+        width: 250px !important;
+    }
+}

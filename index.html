@@ -27,16 +27,6 @@
     <meta name="twitter:image" content="/og-image.svg">
     <meta name="google-site-verification" content="Rc0zgkeYLonK2_SiGcGgE8xjTI115YwYJNS3NVcve3A" />
     <link rel="image_src" href="/og-image.svg">
-    <script>
-        (function(){
-            try{
-                var ua = navigator.userAgent || navigator.vendor || window.opera || '';
-                if(/Pixel|Pixel\s?XL|Pixel\s?2|Pixel\s?3|Pixel\s?4|Pixel\s?5|Pixel\s?6|Pixel\s?7|Pixel\s?8/i.test(ua) || /Android.*Pixel/i.test(ua)){
-                    document.documentElement.classList.add('pixel-device');
-                }
-            }catch(e){ /* ignore */ }
-        })();
-    </script>
     <style>
         /* ====== إعدادات CSS العامة ====== */
         :root {
@@ -2151,15 +2141,40 @@
         }
 
         .code-block {
-            background: var(--code-bg);
-            color: var(--code-text);
+            background: #1e1e1e;
+            color: #d4d4d4;
             padding: 12px;
             border-radius: 8px;
-            font-family: 'Consolas', 'Monaco', monospace;
+            font-family: 'Consolas', 'Monaco', 'JetBrains Mono', monospace;
             overflow-x: auto;
             margin-top: 10px;
             position: relative;
             direction: ltr;
+            border: 1px solid #333;
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-block .copy-code-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .code-block .copy-code-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .code-output {
@@ -2177,10 +2192,12 @@
             padding: 15px 20px;
             background: var(--bg-primary);
             border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 10px;
         }
 
         .input-field {
-            width: 100%;
+            flex: 1;
             padding: 12px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -2201,37 +2218,41 @@
             font-weight: 600;
             transition: all 0.3s;
             font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .send-button:hover {
+        .send-button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
         }
 
-        /* LTR support for English */
-        html[dir="ltr"] .send-button {
-            margin-right: 0;
-            margin-left: 0.5rem;
+        .send-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
 
-        @media (max-width: 768px) {
-            .chatbot-header h2 {
-                font-size: 1.2rem;
-            }
-            
-            .message {
-                max-width: 90%;
-                padding: 10px 12px;
-            }
-            
-            .input-container {
-                padding: 10px 15px;
-            }
-            
-            .send-button {
-                padding: 10px 18px;
-                font-size: 0.9rem;
-            }
+        .thinking-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 10px;
+        }
+
+        .thinking-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .thinking-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
         }
 
         /* ====== أنماط لوحة الأسئلة المحمولة والشريط الجانبى ====== */
@@ -2905,7 +2926,7 @@
     <!-- حاوية البوت الذكي (مخفية افتراضياً) -->
     <div id="chatbotContainer" class="chatbot-container">
         <div class="chatbot-header">
-            <h2><i class="fas fa-robot"></i> الذكاء الاصطناعي</h2>
+            <h2><i class="fas fa-robot"></i> مساعد الذكاء الاصطناعي</h2>
             <button class="close-chatbot-btn" onclick="toggleChatbot()">
                 <i class="fas fa-times"></i>
             </button>
@@ -2917,8 +2938,10 @@
             </div>
             
             <div class="input-container">
-                <textarea id="userInput" class="input-field" placeholder="اكتب سؤالك أو كودك هنا..."></textarea>
-                <button id="sendButton" class="send-button">إرسال</button>
+                <textarea id="userInput" class="input-field" placeholder="اكتب سؤالك أو كودك هنا... (اضغط Shift+Enter للسطر الجديد)"></textarea>
+                <button id="sendButton" class="send-button">
+                    <i class="fas fa-paper-plane"></i> إرسال
+                </button>
             </div>
         </div>
     </div>
@@ -3200,6 +3223,16 @@ if (age >= 18) {
 
     <script>
         // =============================================
+        // إعدادات API الذكاء الاصطناعي
+        // =============================================
+        
+        // ⚠️ ملاحظة مهمة: في الإنتاج الحقيقي، يجب وضع API Key في backend وليس في frontend
+        // هذا فقط لأغراض التعليم والتجربة
+        
+        const OPENAI_API_KEY = "sk-261d385d864540b7926b69e1b1e37e77";
+        const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+        
+        // =============================================
         // نظام الامتحانات
         // =============================================
 
@@ -3389,6 +3422,279 @@ if (age >= 18) {
         let examAnswers = {};
         let currentStudent = null;
         let currentExamType = '';
+        
+        // متغيرات الذكاء الاصطناعي
+        let isAIThinking = false;
+        let chatHistory = [];
+
+        // =============================================
+        // دوال الذكاء الاصطناعي
+        // =============================================
+
+        async function callOpenAI(messages) {
+            try {
+                const response = await fetch(OPENAI_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 1000
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`خطأ في API: ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('خطأ في اتصال OpenAI:', error);
+                throw error;
+            }
+        }
+
+        async function getAIResponse(userMessage) {
+            isAIThinking = true;
+            
+            // إضافة رسالة جديدة إلى المحادثة
+            chatHistory.push({
+                role: "user",
+                content: userMessage
+            });
+            
+            // إعداد رسالة النظام (تعليمات للمساعد)
+            const systemMessage = {
+                role: "system",
+                content: `أنت مساعد ذكي متخصص في JavaScript وبرمجة الويب. أنت تتحدث باللغة العربية.
+                
+                مهامك:
+                1. الإجابة على أسئلة JavaScript وHTML وCSS
+                2. شرح مفاهيم البرمجة
+                3. تصحيح الأخطاء في الكود
+                4. تقديم أمثلة عملية
+                5. المساعدة في حل المشاكل البرمجية
+                
+                قواعد:
+                - أجب باللغة العربية الفصحى أو العامية المصرية حسب السياق
+                - قدم أمثلة عملية مع كود
+                - كن واضحاً ودقيقاً
+                - إذا كان السؤال غير واضح، اطلب توضيحاً
+                - لا تقدم معلومات خاطئة، وإذا كنت لا تعرف، قل ذلك
+                
+                تنسيق الإجابة:
+                - استخدم علامات الترقيم المناسبة
+                - استخدم **تغليق عريض** للمصطلحات المهمة
+                - استخدم \`رمز\` للكود القصير
+                - استخدم كتل الكود للكود الطويل
+                - رقم الخطوات إذا كانت متعددة`
+            };
+            
+            try {
+                // إعداد الرسائل للإرسال
+                const messages = [systemMessage, ...chatHistory.slice(-6)]; // إرسال آخر 6 رسائل فقط
+                
+                const aiResponse = await callOpenAI(messages);
+                
+                // إضافة رد الذكاء الاصطناعي إلى المحادثة
+                chatHistory.push({
+                    role: "assistant",
+                    content: aiResponse
+                });
+                
+                return aiResponse;
+            } catch (error) {
+                console.error('خطأ في الحصول على رد:', error);
+                return "عذراً، حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى لاحقاً.";
+            } finally {
+                isAIThinking = false;
+            }
+        }
+
+        function formatAIResponse(response) {
+            // تحويل الرد إلى تنسيق HTML مناسب
+            let formattedResponse = response;
+            
+            // تحويل العناوين
+            formattedResponse = formattedResponse.replace(/^### (.*$)/gm, '<h4>$1</h4>');
+            formattedResponse = formattedResponse.replace(/^## (.*$)/gm, '<h3>$1</h3>');
+            formattedResponse = formattedResponse.replace(/^# (.*$)/gm, '<h2>$1</h2>');
+            
+            // تحويل النصوص العريضة
+            formattedResponse = formattedResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // تحويل الكود المضمن
+            formattedResponse = formattedResponse.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // تحويل كتل الكود
+            formattedResponse = formattedResponse.replace(/```(\w+)?\n([\s\S]*?)```/g, function(match, lang, code) {
+                const language = lang || 'javascript';
+                const copyButton = '<button class="copy-code-btn" onclick="copyCodeToClipboard(this)"><i class="fas fa-copy"></i> نسخ</button>';
+                return `<div class="code-block"><pre data-lang="${language}">${copyButton}${escapeHTML(code.trim())}</pre></div>`;
+            });
+            
+            // تحويل كتل الكود ذات السطر الواحد
+            formattedResponse = formattedResponse.replace(/```([^`\n]+)```/g, '<div class="code-block"><pre>$1</pre></div>');
+            
+            // تحويل النقاط
+            formattedResponse = formattedResponse.replace(/^\s*[-*+]\s+(.*$)/gm, '<li>$1</li>');
+            formattedResponse = formattedResponse.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
+            
+            // تحويل الأرقام
+            formattedResponse = formattedResponse.replace(/^\s*(\d+)\.\s+(.*$)/gm, '<li>$2</li>');
+            formattedResponse = formattedResponse.replace(/(<li>.*<\/li>)/g, '<ol>$1</ol>');
+            
+            // تحويل الأسطر الجديدة
+            formattedResponse = formattedResponse.replace(/\n/g, '<br>');
+            
+            return formattedResponse;
+        }
+
+        function escapeHTML(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function copyCodeToClipboard(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('pre').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showMessage('تم نسخ الكود إلى الحافظة', 'success');
+            }).catch(err => {
+                showMessage('تعذر نسخ الكود', 'error');
+            });
+        }
+
+        // =============================================
+        // نظام الدردشة الذكية
+        // =============================================
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById('chatbotContainer');
+            if (chatbot.classList.contains('open')) {
+                chatbot.classList.remove('open');
+                chatbot.style.display = 'none';
+            } else {
+                chatbot.classList.add('open');
+                chatbot.style.display = 'flex';
+                
+                // إضافة رسالة ترحيبية إذا كانت المحادثة فارغة
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages.children.length === 0) {
+                    addWelcomeMessage();
+                }
+                
+                // التركيز على حقل الإدخال
+                setTimeout(() => {
+                    document.getElementById('userInput').focus();
+                }, 100);
+            }
+        }
+
+        function addWelcomeMessage() {
+            const chatMessages = document.getElementById('chatMessages');
+            const welcomeMessage = document.createElement('div');
+            welcomeMessage.className = 'message bot-message';
+            welcomeMessage.innerHTML = `
+                <p>مرحباً! 👋 أنا مساعد الذكاء الاصطناعي الخاص بمشغل JavaScript.</p>
+                <p>أنا هنا لمساعدتك في:</p>
+                <ul>
+                    <li>شرح مفاهيم JavaScript وHTML وCSS</li>
+                    <li>تصحيح الأخطاء في الكود</li>
+                    <li>تقديم أمثلة عملية</li>
+                    <li>الإجابة على أسئلة البرمجة</li>
+                    <li>المساعدة في حل المشاكل</li>
+                </ul>
+                <p>💡 <strong>نصيحة:</strong> يمكنك إرسال كودك لي لأقوم بمراجعته وتصحيحه.</p>
+                <p>كيف يمكنني مساعدتك اليوم؟</p>
+            `;
+            chatMessages.appendChild(welcomeMessage);
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const chatMessages = document.getElementById('chatMessages');
+            const sendButton = document.getElementById('sendButton');
+            
+            const message = userInput.value.trim();
+            if (!message || isAIThinking) return;
+            
+            // إضافة رسالة المستخدم
+            addMessageToChat(message, 'user');
+            
+            // مسح حقل الإدخال
+            userInput.value = '';
+            
+            // تعطيل زر الإرسال أثناء التفكير
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // إضافة مؤشر التفكير
+            const thinkingIndicator = document.createElement('div');
+            thinkingIndicator.className = 'message bot-message thinking-indicator';
+            thinkingIndicator.innerHTML = `
+                <span></span>
+                <span></span>
+                <span></span>
+            `;
+            chatMessages.appendChild(thinkingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            try {
+                const aiResponse = await getAIResponse(message);
+                
+                // إزالة مؤشر التفكير
+                thinkingIndicator.remove();
+                
+                // إضافة رد الذكاء الاصطناعي
+                addMessageToChat(aiResponse, 'bot');
+                
+            } catch (error) {
+                // إزالة مؤشر التفكير
+                thinkingIndicator.remove();
+                
+                // إضافة رسالة خطأ
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message bot-message';
+                errorMessage.innerHTML = `
+                    <p>عذراً، حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى.</p>
+                    <p>إذا استمرت المشكلة، يمكنك تجربة الأسئلة التالية:</p>
+                    <ul>
+                        <li>كيف أتعلم JavaScript؟</li>
+                        <li>ما هي أساسيات البرمجة؟</li>
+                        <li>كيف أصلح خطأ في الكود؟</li>
+                    </ul>
+                `;
+                chatMessages.appendChild(errorMessage);
+            } finally {
+                // تمكين زر الإرسال مرة أخرى
+                sendButton.disabled = false;
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال';
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        function addMessageToChat(message, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            if (sender === 'bot') {
+                messageDiv.innerHTML = formatAIResponse(message);
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
 
         // =============================================
         // دوال الامتحان
@@ -4527,6 +4833,10 @@ try {
                     const savedTheme = localStorage.getItem('theme') || 'light';
                     document.documentElement.setAttribute('data-theme', savedTheme);
                 }
+                
+                // إعداد نظام الدردشة الذكية
+                setupChatSystem();
+                
             }, 6000);
             
             // إعداد إغلاق النافذة عند النقر خارجها
@@ -4536,6 +4846,42 @@ try {
                 }
             });
         });
+
+        function setupChatSystem() {
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            if (!userInput || !sendButton) return;
+            
+            // إعداد زر الإرسال
+            sendButton.addEventListener('click', sendMessage);
+            
+            // إعداد اختصار لوحة المفاتيح
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            // إعداد إغلاق النافذة عند النقر خارجها
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            chatbotContainer.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    toggleChatbot();
+                }
+            });
+            
+            // تحميل تاريخ المحادثة المحفوظ
+            const savedChat = localStorage.getItem('chatHistory');
+            if (savedChat) {
+                try {
+                    chatHistory = JSON.parse(savedChat);
+                } catch (e) {
+                    console.warn('تعذر تحميل تاريخ المحادثة:', e);
+                }
+            }
+        }
 
         function initializeWelcomeScreen() {
             const welcomeScreen = document.getElementById('welcomeScreen');
@@ -5182,6 +5528,10 @@ console.log("5 + 3 =", add(5, 3));`
                     closeExamplesModal();
                 }
                 closeLoginModal();
+                const chatbot = document.getElementById('chatbotContainer');
+                if (chatbot.classList.contains('open')) {
+                    toggleChatbot();
+                }
             }
         }
 
@@ -5228,133 +5578,6 @@ console.log("5 + 3 =", add(5, 3));`
             return icons[type] || 'info-circle';
         }
 
-        // دالة البوت الذكي
-        function toggleChatbot() {
-            const chatbot = document.getElementById('chatbotContainer');
-            if (chatbot.classList.contains('open')) {
-                chatbot.classList.remove('open');
-                chatbot.style.display = 'none';
-            } else {
-                chatbot.classList.add('open');
-                chatbot.style.display = 'flex';
-                // إضافة رسالة ترحيبية
-                const chatMessages = document.getElementById('chatMessages');
-                if (chatMessages.children.length === 0) {
-                    const welcomeMessage = document.createElement('div');
-                    welcomeMessage.className = 'message bot-message';
-                    welcomeMessage.innerHTML = `
-                        <p>مرحباً! أنا مساعد الذكاء الاصطناعي الخاص بمشغل JavaScript. كيف يمكنني مساعدتك اليوم؟</p>
-                        <p>يمكنني:</p>
-                        <ul>
-                            <li>شرح مفاهيم JavaScript</li>
-                            <li>تصحيح الأخطاء في الكود</li>
-                            <li>تقديم أمثلة توضيحية</li>
-                            <li>الإجابة على أسئلة البرمجة</li>
-                        </ul>
-                    `;
-                    chatMessages.appendChild(welcomeMessage);
-                }
-            }
-        }
-
-        // إعداد زر الإرسال للبوت الذكي
-        document.addEventListener('DOMContentLoaded', function() {
-            const sendButton = document.getElementById('sendButton');
-            const userInput = document.getElementById('userInput');
-            
-            if (sendButton && userInput) {
-                sendButton.addEventListener('click', function() {
-                    sendMessage();
-                });
-                
-                userInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendMessage();
-                    }
-                });
-            }
-        });
-
-        function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const chatMessages = document.getElementById('chatMessages');
-            
-            if (!userInput.value.trim()) return;
-            
-            // إضافة رسالة المستخدم
-            const userMessage = document.createElement('div');
-            userMessage.className = 'message user-message';
-            userMessage.textContent = userInput.value;
-            chatMessages.appendChild(userMessage);
-            
-            const userQuestion = userInput.value;
-            userInput.value = '';
-            
-            // إضافة رسالة البوت (مؤقتة)
-            const botMessage = document.createElement('div');
-            botMessage.className = 'message bot-message';
-            botMessage.innerHTML = '<p>جاري التفكير...</p>';
-            chatMessages.appendChild(botMessage);
-            
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // محاكاة استجابة الذكاء الاصطناعي
-            setTimeout(() => {
-                const response = getAIResponse(userQuestion);
-                botMessage.innerHTML = `<p>${response}</p>`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 1000);
-        }
-
-        function getAIResponse(question) {
-            const lowerQuestion = question.toLowerCase();
-            
-            // ردود مسبقة التحضير
-            if (lowerQuestion.includes('مرحب') || lowerQuestion.includes('اهلا') || lowerQuestion.includes('السلام')) {
-                return "مرحباً بك! كيف يمكنني مساعدتك في تعلم JavaScript اليوم؟";
-            }
-            
-            if (lowerQuestion.includes('شكر') || lowerQuestion.includes('ممتاز') || lowerQuestion.includes('رائع')) {
-                return "شكراً لك! يسعدني أن أكون مفيداً لك. هل لديك أي أسئلة أخرى عن JavaScript؟";
-            }
-            
-            if (lowerQuestion.includes('ماهو javascript') || lowerQuestion.includes('ما هي javascript')) {
-                return "JavaScript هي لغة برمجة عالية المستوى تستخدم لتطوير الويب. تُستخدم أساساً في متصفحات الويب لإنشاء صفحات ويب تفاعلية، ولكنها تستخدم الآن أيضاً في تطوير التطبيقات الخلفية (Backend) عبر Node.js.";
-            }
-            
-            if (lowerQuestion.includes('console.log') || lowerQuestion.includes('طباعة')) {
-                return "console.log() هي دالة في JavaScript تستخدم لطباعة القيم إلى وحدة التحكم (Console). مثال: console.log('مرحباً بالعالم');";
-            }
-            
-            if (lowerQuestion.includes('مصفوفة') || lowerQuestion.includes('array')) {
-                return "المصفوفة (Array) في JavaScript هي كائن يستخدم لتخزين قيم متعددة في متغير واحد. مثال: let fruits = ['تفاح', 'موز', 'برتقال'];";
-            }
-            
-            if (lowerQuestion.includes('دالة') || lowerQuestion.includes('function')) {
-                return "الدالة (Function) في JavaScript هي كتلة من الكود مصممة لأداء مهمة معينة. مثال: function greet(name) { return 'مرحباً ' + name; }";
-            }
-            
-            if (lowerQuestion.includes('var') || lowerQuestion.includes('let') || lowerQuestion.includes('const')) {
-                return "في JavaScript هناك ثلاث طرق لتحديد المتغيرات:\n1. var - النطاق الوظيفي (function-scoped)\n2. let - النطاق الكتلي (block-scoped) ويمكن إعادة التعيين\n3. const - النطاق الكتلي ولا يمكن إعادة التعيين";
-            }
-            
-            if (lowerQuestion.includes('خطأ') || lowerQuestion.includes('error') || lowerQuestion.includes('مشكلة')) {
-                return "للتعامل مع الأخطاء في JavaScript، يمكنك استخدام try...catch:\n\ntry {\n  // كود قد يسبب خطأ\n} catch(error) {\n  console.log('حدث خطأ:', error.message);\n}";
-            }
-            
-            if (lowerQuestion.includes('مثال') || lowerQuestion.includes('كود') || lowerQuestion.includes('برنامج')) {
-                return "إليك مثالاً على دالة بسيطة لحساب مجموع عددين:\n\nfunction sum(a, b) {\n  return a + b;\n}\nconsole.log(sum(5, 3)); // الناتج: 8";
-            }
-            
-            if (lowerQuestion.includes('الحلقات') || lowerQuestion.includes('loop') || lowerQuestion.includes('تكرار')) {
-                return "هناك عدة أنواع من الحلقات في JavaScript:\n1. for - للحلقات المعروفة بعدد التكرارات\n2. while - عندما لا يكون عدد التكرارات معروفاً\n3. for...of - للتكرار على عناصر المصفوفات\n4. for...in - للتكرار على خصائص الكائنات";
-            }
-            
-            // رد افتراضي
-            return "شكراً لسؤالك! يمكنني مساعدتك في مواضيع JavaScript مثل:\n• المتغيرات وأنواع البيانات\n• الدوال والمصفوفات\n• الكائنات والفئات\n• معالجة الأخطاء\n• العمليات غير المتزامنة\n• وغيرها الكثير.\n\nيرجى طرح سؤال محدد لأتمكن من مساعدتك بشكل أفضل!";
-        }
-
         // جعل الدوال متاحة عالمياً
         window.runCode = runCode;
         window.openExamplesModal = openExamplesModal;
@@ -5375,9 +5598,10 @@ console.log("5 + 3 =", add(5, 3));`
         window.closeLoginModal = closeLoginModal;
         window.toggleChatbot = toggleChatbot;
         window.navigateToQuestion = navigateToQuestion;
+        window.copyCodeToClipboard = copyCodeToClipboard;
 
         console.log('🚀 النظام جاهز للعمل!');
+        console.log('🤖 نظام الذكاء الاصطناعي نشط!');
     </script>
 </body>
-
 </html>
